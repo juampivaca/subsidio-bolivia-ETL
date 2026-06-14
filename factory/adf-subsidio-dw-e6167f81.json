@@ -1,0 +1,15 @@
+{
+	"name": "adf-subsidio-dw-e6167f81",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "brazilsouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "f1121094-5af9-4894-a6a9-a2972e3790c8",
+		"tenantId": "cc28633f-12b8-46cb-bc15-951dae239b4d"
+	}
+}

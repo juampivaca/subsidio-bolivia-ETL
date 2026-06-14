@@ -1,0 +1,11 @@
+{
+	"name": "ls_adls_gen2_subsidio",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://sadwsubsidioe6167f81.dfs.core.windows.net"
+		},
+		"annotations": []
+	}
+}
