@@ -1,0 +1,48 @@
+{
+	"name": "raw_spl_cajas_salud",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_gen2_subsidio",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "raw_data"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "spl_cajas_salud.csv",
+				"folderPath": "bronze",
+				"fileSystem": "datalake"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ID",
+				"type": "String"
+			},
+			{
+				"name": "Nombre",
+				"type": "String"
+			},
+			{
+				"name": "Sigla",
+				"type": "String"
+			},
+			{
+				"name": "Tipo",
+				"type": "String"
+			},
+			{
+				"name": "Estado",
+				"type": "String"
+			}
+		]
+	}
+}

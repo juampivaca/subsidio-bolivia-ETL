@@ -1,0 +1,56 @@
+{
+	"name": "ds_silver_agencia_vehiculos",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "vehiculo_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "transportista_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "descripcion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "placa",
+				"type": "nvarchar"
+			},
+			{
+				"name": "tipo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "capacidad_kg",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "estado",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_loaded_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "agencia_vehiculos"
+		}
+	}
+}

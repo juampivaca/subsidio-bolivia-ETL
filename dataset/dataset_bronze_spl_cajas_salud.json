@@ -1,0 +1,45 @@
+{
+	"name": "dataset_bronze_spl_cajas_salud",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "caja_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nombre",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sigla",
+				"type": "nvarchar"
+			},
+			{
+				"name": "tipo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_ingested_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "spl_cajas_salud"
+		}
+	}
+}

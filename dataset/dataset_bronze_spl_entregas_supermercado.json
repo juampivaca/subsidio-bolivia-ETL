@@ -1,0 +1,57 @@
+{
+	"name": "dataset_bronze_spl_entregas_supermercado",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "entrega_super_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "asignacion_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ci_beneficiaria",
+				"type": "nvarchar"
+			},
+			{
+				"name": "supermercado_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "fecha_retiro",
+				"type": "nvarchar"
+			},
+			{
+				"name": "tipo_carne",
+				"type": "nvarchar"
+			},
+			{
+				"name": "cantidad_kg",
+				"type": "nvarchar"
+			},
+			{
+				"name": "monto_bs",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_ingested_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "spl_entregas_supermercado"
+		}
+	}
+}

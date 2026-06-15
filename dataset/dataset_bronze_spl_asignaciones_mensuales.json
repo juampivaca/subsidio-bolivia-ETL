@@ -1,0 +1,57 @@
+{
+	"name": "dataset_bronze_spl_asignaciones_mensuales",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "asignacion_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "afiliacion_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "mes",
+				"type": "nvarchar"
+			},
+			{
+				"name": "gestion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "monto_bs",
+				"type": "nvarchar"
+			},
+			{
+				"name": "monto_productos",
+				"type": "nvarchar"
+			},
+			{
+				"name": "monto_carnes",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_ingested_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "spl_asignaciones_mensuales"
+		}
+	}
+}

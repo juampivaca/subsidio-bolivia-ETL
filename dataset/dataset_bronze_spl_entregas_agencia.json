@@ -1,0 +1,57 @@
+{
+	"name": "dataset_bronze_spl_entregas_agencia",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "entrega_ag_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "asignacion_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ci_beneficiaria",
+				"type": "nvarchar"
+			},
+			{
+				"name": "fecha_entrega",
+				"type": "nvarchar"
+			},
+			{
+				"name": "productos",
+				"type": "nvarchar"
+			},
+			{
+				"name": "lote",
+				"type": "nvarchar"
+			},
+			{
+				"name": "peso_kg",
+				"type": "nvarchar"
+			},
+			{
+				"name": "punto_entrega",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_ingested_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "spl_entregas_agencia"
+		}
+	}
+}

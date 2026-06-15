@@ -1,0 +1,54 @@
+{
+	"name": "ds_silver_agencia_transportistas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "transportista_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "razon_social",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nit",
+				"type": "nvarchar"
+			},
+			{
+				"name": "municipio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "contacto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "telefono",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_loaded_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "agencia_transportistas"
+		}
+	}
+}

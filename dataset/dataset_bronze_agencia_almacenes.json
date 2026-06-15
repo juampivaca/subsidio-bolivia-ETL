@@ -1,0 +1,53 @@
+{
+	"name": "dataset_bronze_agencia_almacenes",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "almacen_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nombre",
+				"type": "nvarchar"
+			},
+			{
+				"name": "municipio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "departamento",
+				"type": "nvarchar"
+			},
+			{
+				"name": "direccion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "capacidad_m3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_ingested_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "agencia_almacenes"
+		}
+	}
+}

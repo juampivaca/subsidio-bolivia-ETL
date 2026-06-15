@@ -1,0 +1,57 @@
+{
+	"name": "ds_silver_segip_personas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ci",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nombres",
+				"type": "nvarchar"
+			},
+			{
+				"name": "apellido_paterno",
+				"type": "nvarchar"
+			},
+			{
+				"name": "apellido_materno",
+				"type": "nvarchar"
+			},
+			{
+				"name": "fecha_nacimiento",
+				"type": "date"
+			},
+			{
+				"name": "genero",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado_civil",
+				"type": "nvarchar"
+			},
+			{
+				"name": "municipio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_loaded_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "segip_personas"
+		}
+	}
+}

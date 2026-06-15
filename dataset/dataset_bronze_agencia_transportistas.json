@@ -1,0 +1,53 @@
+{
+	"name": "dataset_bronze_agencia_transportistas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "transportista_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "razon_social",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nit",
+				"type": "nvarchar"
+			},
+			{
+				"name": "municipio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "contacto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "telefono",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_ingested_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "agencia_transportistas"
+		}
+	}
+}

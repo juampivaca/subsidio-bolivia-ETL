@@ -1,0 +1,56 @@
+{
+	"name": "raw_agencia_transportistas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_gen2_subsidio",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "raw_data"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "agencia_transportistas.csv",
+				"folderPath": "bronze",
+				"fileSystem": "datalake"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "transportista_id",
+				"type": "String"
+			},
+			{
+				"name": "razon_social",
+				"type": "String"
+			},
+			{
+				"name": "nit",
+				"type": "String"
+			},
+			{
+				"name": "municipio",
+				"type": "String"
+			},
+			{
+				"name": "contacto",
+				"type": "String"
+			},
+			{
+				"name": "telefono",
+				"type": "String"
+			},
+			{
+				"name": "estado",
+				"type": "String"
+			}
+		]
+	}
+}

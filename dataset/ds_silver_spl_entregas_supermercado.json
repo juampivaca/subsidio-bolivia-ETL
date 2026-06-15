@@ -1,0 +1,64 @@
+{
+	"name": "ds_silver_spl_entregas_supermercado",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "entrega_super_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "asignacion_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ci_beneficiaria",
+				"type": "nvarchar"
+			},
+			{
+				"name": "supermercado_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "fecha_retiro",
+				"type": "date"
+			},
+			{
+				"name": "tipo_carne",
+				"type": "nvarchar"
+			},
+			{
+				"name": "cantidad_kg",
+				"type": "decimal",
+				"precision": 6,
+				"scale": 2
+			},
+			{
+				"name": "monto_bs",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "_loaded_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "spl_entregas_supermercado"
+		}
+	}
+}

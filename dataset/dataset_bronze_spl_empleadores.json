@@ -1,0 +1,49 @@
+{
+	"name": "dataset_bronze_spl_empleadores",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "empleador_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nit",
+				"type": "nvarchar"
+			},
+			{
+				"name": "razon_social",
+				"type": "nvarchar"
+			},
+			{
+				"name": "tipo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nro_patronal",
+				"type": "nvarchar"
+			},
+			{
+				"name": "municipio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_ingested_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "spl_empleadores"
+		}
+	}
+}

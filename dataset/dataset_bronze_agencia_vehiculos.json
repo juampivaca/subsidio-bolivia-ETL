@@ -1,0 +1,53 @@
+{
+	"name": "dataset_bronze_agencia_vehiculos",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "vehiculo_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "transportista_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "descripcion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "placa",
+				"type": "nvarchar"
+			},
+			{
+				"name": "tipo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "capacidad_kg",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_ingested_at",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "agencia_vehiculos"
+		}
+	}
+}

@@ -1,0 +1,56 @@
+{
+	"name": "raw_spl_certificados_medicos",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_gen2_subsidio",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "raw_data"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "spl_certificados_medicos.csv",
+				"folderPath": "bronze",
+				"fileSystem": "datalake"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "certificado_id",
+				"type": "String"
+			},
+			{
+				"name": "afiliacion_id",
+				"type": "String"
+			},
+			{
+				"name": "fecha_emision",
+				"type": "String"
+			},
+			{
+				"name": "semana_gestacion",
+				"type": "String"
+			},
+			{
+				"name": "fecha_probable_parto",
+				"type": "String"
+			},
+			{
+				"name": "medico_responsable",
+				"type": "String"
+			},
+			{
+				"name": "estado",
+				"type": "String"
+			}
+		]
+	}
+}
