@@ -1,0 +1,78 @@
+{
+	"name": "dataflow_dim_canal_entrega",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_spl_entregas_agencia",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_spl_supermercados",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "union1"
+				},
+				{
+					"name": "cast1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          tipo_canal as string,",
+				"          nombre_punto as string,",
+				"          cadena as integer,",
+				"          sucursal as integer,",
+				"          municipio as integer,",
+				"          ciudad as string,",
+				"          departamento as string,",
+				"          abrev_depto as string,",
+				"          direccion as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT DISTINCT\\r\\n    \\'Agencia\\'            AS tipo_canal,\\r\\n    punto_entrega        AS nombre_punto,\\r\\n    NULL                 AS cadena,\\r\\n    NULL                 AS sucursal,\\r\\n    NULL                 AS municipio,\\r\\n    ciudad_entrega       AS ciudad,\\r\\n    departamento_entrega AS departamento,\\r\\n    abreviacion_departamento  AS abrev_depto,\\r\\n    NULL                 AS direccion\\r\\nFROM silver.spl_entregas_agencia\\r\\nWHERE punto_entrega IS NOT NULL',",
+				"     format: 'query') ~> source1",
+				"source(output(",
+				"          tipo_canal as string,",
+				"          nombre_punto as string,",
+				"          cadena as string,",
+				"          sucursal as string,",
+				"          municipio as string,",
+				"          ciudad as string,",
+				"          departamento as string,",
+				"          abrev_depto as string,",
+				"          direccion as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\r\\n    \\'Supermercado\\'                  AS tipo_canal,\\r\\n    CONCAT(cadena, \\' - \\', sucursal) AS nombre_punto,\\r\\n    cadena,\\r\\n    sucursal,\\r\\n    municipio,\\r\\n    municipio                       AS ciudad,\\r\\n    departamento,\\r\\n    abreviacion_departamento              AS abrev_depto,\\r\\n    direccion\\r\\nFROM silver.spl_supermercados\\r\\nWHERE estado = \\'Activo\\'',",
+				"     format: 'query') ~> source2",
+				"cast1, source2 union(byName: true)~> union1",
+				"source1 cast(output(",
+				"          cadena as string,",
+				"          sucursal as string,",
+				"          municipio as string,",
+				"          direccion as string",
+				"     ),",
+				"     errors: true) ~> cast1"
+			]
+		}
+	}
+}

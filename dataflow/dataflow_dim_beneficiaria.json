@@ -1,0 +1,36 @@
+{
+	"name": "dataflow_dim_beneficiaria",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_spl_afiliaciones",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          ci_beneficiaria as string,",
+				"          tipo_subsidio as string,",
+				"          estado as string,",
+				"          nro_matricula as string,",
+				"          abreviacion_departamento_ci as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\r\\n    ci_beneficiaria,\\r\\n    tipo_subsidio,\\r\\n    estado,\\r\\n    nro_matricula,\\r\\n    abreviacion_departamento_ci\\r\\nFROM silver.spl_afiliaciones',",
+				"     format: 'query') ~> source1"
+			]
+		}
+	}
+}

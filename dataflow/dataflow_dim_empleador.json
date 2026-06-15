@@ -1,0 +1,55 @@
+{
+	"name": "dataflow_dim_empleador",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_spl_empleadores",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          empleador_id as integer,",
+				"          nit as string,",
+				"          razon_social as string,",
+				"          tipo as string,",
+				"          nro_patronal as string,",
+				"          municipio as string,",
+				"          departamento_empleador as string,",
+				"          abreviacion_departamento as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT empleador_id, nit, razon_social, tipo,\\r\\n       nro_patronal, municipio,\\r\\n       departamento_empleador, abreviacion_departamento\\r\\nFROM silver.spl_empleadores',",
+				"     format: 'query') ~> source1",
+				"source1 select(mapColumn(",
+				"          empleador_id_nk = empleador_id,",
+				"          nit,",
+				"          razon_social,",
+				"          tipo,",
+				"          nro_patronal,",
+				"          municipio,",
+				"          departamento_empleador,",
+				"          abrev_depto_empleador = abreviacion_departamento",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1"
+			]
+		}
+	}
+}
