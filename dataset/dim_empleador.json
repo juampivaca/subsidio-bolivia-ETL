@@ -1,0 +1,58 @@
+{
+	"name": "dim_empleador",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "empleador_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "empleador_id_nk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "nit",
+				"type": "nvarchar"
+			},
+			{
+				"name": "razon_social",
+				"type": "nvarchar"
+			},
+			{
+				"name": "tipo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nro_patronal",
+				"type": "nvarchar"
+			},
+			{
+				"name": "municipio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "departamento_empleador",
+				"type": "nvarchar"
+			},
+			{
+				"name": "abrev_depto_empleador",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_empleador"
+		}
+	}
+}

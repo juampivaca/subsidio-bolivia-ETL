@@ -13,10 +13,32 @@
 						"type": "DatasetReference"
 					},
 					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_segip_personas",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dim_beneficiaria",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "select1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          ci_beneficiaria as string,",
@@ -29,7 +51,71 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     query: 'SELECT\\r\\n    ci_beneficiaria,\\r\\n    tipo_subsidio,\\r\\n    estado,\\r\\n    nro_matricula,\\r\\n    abreviacion_departamento_ci\\r\\nFROM silver.spl_afiliaciones',",
-				"     format: 'query') ~> source1"
+				"     format: 'query') ~> source1",
+				"source(output(",
+				"          ci as string,",
+				"          nombres as string,",
+				"          apellido_paterno as string,",
+				"          apellido_materno as string,",
+				"          fecha_nacimiento as date,",
+				"          genero as string,",
+				"          estado_civil as string,",
+				"          municipio as string,",
+				"          departamento_ci as string,",
+				"          abreviacion_departamento_ci as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT ci, nombres, apellido_paterno, apellido_materno,\\r\\n       fecha_nacimiento, genero, estado_civil, municipio,\\r\\n       departamento_ci, abreviacion_departamento_ci\\r\\nFROM silver.segip_personas',",
+				"     format: 'query') ~> source2",
+				"source1, source2 lookup(ci_beneficiaria == ci,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 select(mapColumn(",
+				"          ci_beneficiaria,",
+				"          tipo_subsidio,",
+				"          estado,",
+				"          nro_matricula,",
+				"          abrev_depto_ci = source1@abreviacion_departamento_ci,",
+				"          nombres,",
+				"          apellido_paterno,",
+				"          apellido_materno,",
+				"          fecha_nacimiento,",
+				"          genero,",
+				"          estado_civil,",
+				"          municipio,",
+				"          departamento_ci",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          beneficiaria_sk as integer,",
+				"          ci_beneficiaria as string,",
+				"          nombres as string,",
+				"          apellido_paterno as string,",
+				"          apellido_materno as string,",
+				"          fecha_nacimiento as date,",
+				"          genero as string,",
+				"          estado_civil as string,",
+				"          municipio as string,",
+				"          departamento_ci as string,",
+				"          abrev_depto_ci as string,",
+				"          tipo_subsidio as string,",
+				"          estado_afiliacion as string,",
+				"          nro_matricula as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}

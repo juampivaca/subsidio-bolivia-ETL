@@ -1,0 +1,103 @@
+{
+	"name": "dataflow_dim_transportista",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_agencia_transportistas",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_agencia_vehiculos",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dim_transportista",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          transportista_id as integer,",
+				"          razon_social as string,",
+				"          nit as string,",
+				"          municipio as string,",
+				"          estado as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT transportista_id, razon_social, nit, municipio, estado\\r\\nFROM silver.agencia_transportistas',",
+				"     format: 'query') ~> source1",
+				"source(output(",
+				"          transportista_id as integer,",
+				"          tipo as string,",
+				"          capacidad_kg as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT transportista_id, tipo, capacidad_kg\\nFROM (\\n    SELECT\\n        transportista_id,\\n        tipo,\\n        capacidad_kg,\\n        ROW_NUMBER() OVER (\\n            PARTITION BY transportista_id\\n            ORDER BY COUNT(*) DESC\\n        ) AS rn\\n    FROM silver.agencia_vehiculos\\n    WHERE tipo IS NOT NULL\\n    GROUP BY transportista_id, tipo, capacidad_kg\\n) x\\nWHERE rn = 1',",
+				"     format: 'query') ~> source2",
+				"source2, source1 lookup(source2@transportista_id == source1@transportista_id,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 select(mapColumn(",
+				"          tipo_vehiculo = tipo,",
+				"          transportista_id_nk = source1@transportista_id,",
+				"          razon_social,",
+				"          nit,",
+				"          municipio,",
+				"          estado,",
+				"          capacidad_kg",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          transportista_sk as integer,",
+				"          transportista_id_nk as integer,",
+				"          razon_social as string,",
+				"          nit as string,",
+				"          municipio as string,",
+				"          tipo_vehiculo as string,",
+				"          capacidad_kg as integer,",
+				"          estado as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

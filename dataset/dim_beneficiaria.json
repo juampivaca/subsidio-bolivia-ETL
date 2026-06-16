@@ -1,0 +1,77 @@
+{
+	"name": "dim_beneficiaria",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "beneficiaria_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ci_beneficiaria",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nombres",
+				"type": "nvarchar"
+			},
+			{
+				"name": "apellido_paterno",
+				"type": "nvarchar"
+			},
+			{
+				"name": "apellido_materno",
+				"type": "nvarchar"
+			},
+			{
+				"name": "fecha_nacimiento",
+				"type": "date"
+			},
+			{
+				"name": "genero",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado_civil",
+				"type": "nvarchar"
+			},
+			{
+				"name": "municipio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "departamento_ci",
+				"type": "nvarchar"
+			},
+			{
+				"name": "abrev_depto_ci",
+				"type": "nvarchar"
+			},
+			{
+				"name": "tipo_subsidio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado_afiliacion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nro_matricula",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_beneficiaria"
+		}
+	}
+}

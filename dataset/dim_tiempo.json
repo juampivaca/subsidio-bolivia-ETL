@@ -1,0 +1,53 @@
+{
+	"name": "dim_tiempo",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "tiempo_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "fecha",
+				"type": "date"
+			},
+			{
+				"name": "gestion",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "mes",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "nombre_mes",
+				"type": "nvarchar"
+			},
+			{
+				"name": "trimestre",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "semestre",
+				"type": "tinyint",
+				"precision": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_tiempo"
+		}
+	}
+}

@@ -1,0 +1,41 @@
+{
+	"name": "dim_tipo_carne",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "tipo_carne_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "tipo_carne_nk",
+				"type": "nvarchar"
+			},
+			{
+				"name": "es_ave",
+				"type": "bit"
+			},
+			{
+				"name": "es_roja",
+				"type": "bit"
+			},
+			{
+				"name": "es_acuatica",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_tipo_carne"
+		}
+	}
+}

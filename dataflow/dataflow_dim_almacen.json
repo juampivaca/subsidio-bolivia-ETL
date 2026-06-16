@@ -1,5 +1,5 @@
 {
-	"name": "dataflow_dim_empleador",
+	"name": "dataflow_dim_almacen",
 	"properties": {
 		"folder": {
 			"name": "gold"
@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ds_silver_spl_empleadores",
+						"referenceName": "ds_silver_agencia_almacenes",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "dim_empleador",
+						"referenceName": "dim_almacen",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
@@ -31,44 +31,38 @@
 			],
 			"scriptLines": [
 				"source(output(",
-				"          empleador_id as integer,",
-				"          nit as string,",
-				"          razon_social as string,",
-				"          tipo as string,",
-				"          nro_patronal as string,",
+				"          almacen_id as integer,",
+				"          nombre as string,",
 				"          municipio as string,",
-				"          departamento_empleador as string,",
-				"          abreviacion_departamento as string",
+				"          departamento as string,",
+				"          capacidad_m3 as integer,",
+				"          estado as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     query: 'SELECT empleador_id, nit, razon_social, tipo,\\r\\n       nro_patronal, municipio,\\r\\n       departamento_empleador, abreviacion_departamento\\r\\nFROM silver.spl_empleadores',",
+				"     query: 'SELECT almacen_id, nombre, municipio, departamento, capacidad_m3, estado\\r\\nFROM silver.agencia_almacenes',",
 				"     format: 'query') ~> source1",
 				"source1 select(mapColumn(",
-				"          empleador_id_nk = empleador_id,",
-				"          nit,",
-				"          razon_social,",
-				"          tipo,",
-				"          nro_patronal,",
+				"          almacen_id_nk = almacen_id,",
+				"          nombre,",
 				"          municipio,",
-				"          departamento_empleador,",
-				"          abrev_depto_empleador = abreviacion_departamento",
+				"          departamento,",
+				"          capacidad_m3,",
+				"          estado",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
-				"          empleador_sk as integer,",
-				"          empleador_id_nk as integer,",
-				"          nit as string,",
-				"          razon_social as string,",
-				"          tipo as string,",
-				"          nro_patronal as string,",
+				"          almacen_sk as integer,",
+				"          almacen_id_nk as integer,",
+				"          nombre as string,",
 				"          municipio as string,",
-				"          departamento_empleador as string,",
-				"          abrev_depto_empleador as string",
+				"          departamento as string,",
+				"          capacidad_m3 as integer,",
+				"          estado as string",
 				"     ),",
 				"     deletable:false,",
 				"     insertable:true,",

@@ -22,7 +22,15 @@
 					"name": "source2"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dim_canal_entrega",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "union1"
@@ -71,7 +79,29 @@
 				"          municipio as string,",
 				"          direccion as string",
 				"     ),",
-				"     errors: true) ~> cast1"
+				"     errors: true) ~> cast1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          canal_sk as integer,",
+				"          tipo_canal as string,",
+				"          nombre_punto as string,",
+				"          cadena as string,",
+				"          sucursal as string,",
+				"          municipio as string,",
+				"          ciudad as string,",
+				"          departamento as string,",
+				"          abrev_depto as string,",
+				"          direccion as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}

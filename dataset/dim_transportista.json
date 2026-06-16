@@ -1,0 +1,55 @@
+{
+	"name": "dim_transportista",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "transportista_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "transportista_id_nk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "razon_social",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nit",
+				"type": "nvarchar"
+			},
+			{
+				"name": "municipio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "tipo_vehiculo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "capacidad_kg",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "estado",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_transportista"
+		}
+	}
+}

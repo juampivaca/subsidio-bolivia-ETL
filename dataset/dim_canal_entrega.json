@@ -1,0 +1,61 @@
+{
+	"name": "dim_canal_entrega",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "canal_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "tipo_canal",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nombre_punto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "cadena",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sucursal",
+				"type": "nvarchar"
+			},
+			{
+				"name": "municipio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ciudad",
+				"type": "nvarchar"
+			},
+			{
+				"name": "departamento",
+				"type": "nvarchar"
+			},
+			{
+				"name": "abrev_depto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "direccion",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_canal_entrega"
+		}
+	}
+}
