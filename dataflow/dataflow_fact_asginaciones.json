@@ -1,0 +1,180 @@
+{
+	"name": "dataflow_fact_asginaciones",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_spl_asignaciones_mensuales",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_spl_afiliaciones",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_beneficiaria",
+						"type": "DatasetReference"
+					},
+					"name": "source3"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_empleador",
+						"type": "DatasetReference"
+					},
+					"name": "source4"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_caja_salud",
+						"type": "DatasetReference"
+					},
+					"name": "source5"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_tiempo",
+						"type": "DatasetReference"
+					},
+					"name": "source6"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "lookup2"
+				},
+				{
+					"name": "lookup3"
+				},
+				{
+					"name": "lookup4"
+				},
+				{
+					"name": "lookup5"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          asignacion_id as integer,",
+				"          afiliacion_id as integer,",
+				"          mes as integer,",
+				"          gestion as short,",
+				"          monto_bs as decimal(10,2),",
+				"          monto_productos as decimal(10,2),",
+				"          monto_carnes as decimal(10,2),",
+				"          estado as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\r\\n    asignacion_id,\\r\\n    afiliacion_id,\\r\\n    mes,\\r\\n    gestion,\\r\\n    monto_bs,\\r\\n    monto_productos,\\r\\n    monto_carnes,\\r\\n    estado\\r\\nFROM silver.spl_asignaciones_mensuales',",
+				"     format: 'query') ~> source1",
+				"source(output(",
+				"          afiliacion_id as integer,",
+				"          ci_beneficiaria as string,",
+				"          empleador_id as integer,",
+				"          caja_id as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT afiliacion_id, ci_beneficiaria, empleador_id, caja_id\\nFROM silver.spl_afiliaciones',",
+				"     format: 'query') ~> source2",
+				"source(output(",
+				"          beneficiaria_sk as integer,",
+				"          ci_beneficiaria as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT beneficiaria_sk, ci_beneficiaria\\nFROM gold.dim_beneficiaria',",
+				"     format: 'query') ~> source3",
+				"source(output(",
+				"          empleador_sk as integer,",
+				"          empleador_id_nk as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT empleador_sk, empleador_id_nk\\nFROM gold.dim_empleador',",
+				"     format: 'query') ~> source4",
+				"source(output(",
+				"          caja_sk as integer,",
+				"          caja_id_nk as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT caja_sk, caja_id_nk\\nFROM gold.dim_caja_salud',",
+				"     format: 'query') ~> source5",
+				"source(output(",
+				"          tiempo_sk as integer,",
+				"          gestion as short,",
+				"          mes as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT tiempo_sk, gestion, mes\\nFROM gold.dim_tiempo',",
+				"     format: 'query') ~> source6",
+				"source1, source2 lookup(source1@afiliacion_id == source2@afiliacion_id,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(source2@afiliacion_id, true),",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1, source3 lookup(source2@ci_beneficiaria == source3@ci_beneficiaria,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(beneficiaria_sk, true),",
+				"     broadcast: 'auto')~> lookup2",
+				"lookup2, source4 lookup(empleador_id == empleador_id_nk,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(empleador_id_nk, true),",
+				"     broadcast: 'auto')~> lookup3",
+				"lookup3, source5 lookup(caja_id == caja_id_nk,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(caja_id_nk, true),",
+				"     broadcast: 'auto')~> lookup4",
+				"lookup4, source6 lookup(source1@mes == source6@mes",
+				"     && source1@gestion == source6@gestion,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(source6@gestion, true),",
+				"     broadcast: 'auto')~> lookup5",
+				"lookup5 select(mapColumn(",
+				"          asignacion_id_nk = asignacion_id,",
+				"          monto_bs,",
+				"          monto_productos,",
+				"          monto_carnes,",
+				"          estado,",
+				"          beneficiaria_sk,",
+				"          empleador_sk,",
+				"          caja_sk,",
+				"          tiempo_sk",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1"
+			]
+		}
+	}
+}
