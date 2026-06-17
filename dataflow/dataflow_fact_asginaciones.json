@@ -41,13 +41,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "source5"
-				},
-				{
-					"dataset": {
-						"referenceName": "dim_tiempo",
-						"type": "DatasetReference"
-					},
-					"name": "source6"
 				}
 			],
 			"sinks": [],
@@ -63,9 +56,6 @@
 				},
 				{
 					"name": "lookup4"
-				},
-				{
-					"name": "lookup5"
 				},
 				{
 					"name": "select1"
@@ -125,16 +115,6 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     query: 'SELECT caja_sk, caja_id_nk\\nFROM gold.dim_caja_salud',",
 				"     format: 'query') ~> source5",
-				"source(output(",
-				"          tiempo_sk as integer,",
-				"          gestion as short,",
-				"          mes as integer",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     query: 'SELECT tiempo_sk, gestion, mes\\nFROM gold.dim_tiempo',",
-				"     format: 'query') ~> source6",
 				"source1, source2 lookup(source1@afiliacion_id == source2@afiliacion_id,",
 				"     multiple: false,",
 				"     pickup: 'first',",
@@ -155,13 +135,7 @@
 				"     pickup: 'first',",
 				"     asc(caja_id_nk, true),",
 				"     broadcast: 'auto')~> lookup4",
-				"lookup4, source6 lookup(source1@mes == source6@mes",
-				"     && source1@gestion == source6@gestion,",
-				"     multiple: false,",
-				"     pickup: 'first',",
-				"     asc(source6@gestion, true),",
-				"     broadcast: 'auto')~> lookup5",
-				"lookup5 select(mapColumn(",
+				"lookup4 select(mapColumn(",
 				"          asignacion_id_nk = asignacion_id,",
 				"          monto_bs,",
 				"          monto_productos,",
@@ -170,7 +144,8 @@
 				"          beneficiaria_sk,",
 				"          empleador_sk,",
 				"          caja_sk,",
-				"          tiempo_sk",
+				"          mes,",
+				"          gestion",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1"
