@@ -27,17 +27,17 @@
 						"type": "DatasetReference"
 					},
 					"name": "source3"
-				},
-				{
-					"dataset": {
-						"referenceName": "dim_tiempo",
-						"type": "DatasetReference"
-					},
-					"name": "source4",
-					"description": "Importar datos de dim_tiempo"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "fact_entregas",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "lookup1"
@@ -46,7 +46,10 @@
 					"name": "lookup2"
 				},
 				{
-					"name": "lookup3"
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -89,17 +92,6 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     query: 'SELECT canal_sk, nombre_punto FROM gold.dim_canal_entrega',",
 				"     format: 'query') ~> source3",
-				"source(output(",
-				"          tiempo_sk as integer,",
-				"          fecha as date,",
-				"          mes as integer,",
-				"          gestion as short",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     query: 'SELECT tiempo_sk, fecha, mes, gestion FROM gold.dim_tiempo',",
-				"     format: 'query') ~> source4",
 				"source1, source2 lookup(source1@ci_beneficiaria == source2@ci_beneficiaria,",
 				"     multiple: false,",
 				"     pickup: 'first',",
@@ -110,11 +102,58 @@
 				"     pickup: 'first',",
 				"     asc(canal_sk, true),",
 				"     broadcast: 'auto')~> lookup2",
-				"lookup2, source4 lookup(fecha_entrega == fecha,",
-				"     multiple: false,",
-				"     pickup: 'first',",
-				"     asc(tiempo_sk, false),",
-				"     broadcast: 'auto')~> lookup3"
+				"derivedColumn1 select(mapColumn(",
+				"          entrega_ag_id_nk = entrega_ag_id,",
+				"          fecha_entrega,",
+				"          ciudad_entrega,",
+				"          departamento_entrega,",
+				"          abrev_depto_entrega,",
+				"          nro_lote,",
+				"          cantidad_kg,",
+				"          flag_sin_detalle_prods = sin_detalle_productos,",
+				"          flag_peso_anomalo = peso_anomalo,",
+				"          gestion = anio_entrega,",
+				"          mes = mes_entrega,",
+				"          beneficiaria_sk,",
+				"          canal_sk,",
+				"          tipo_canal",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"lookup2 derive(tipo_canal = 'Agencia') ~> derivedColumn1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          entrega_sk as integer,",
+				"          beneficiaria_sk as integer,",
+				"          canal_sk as integer,",
+				"          almacen_sk as integer,",
+				"          tipo_carne_sk as integer,",
+				"          tipo_canal as string,",
+				"          monto_bs as decimal(10,2),",
+				"          cantidad_kg as decimal(8,2),",
+				"          nro_lote as string,",
+				"          ciudad_entrega as string,",
+				"          departamento_entrega as string,",
+				"          abrev_depto_entrega as string,",
+				"          flag_peso_anomalo as boolean,",
+				"          flag_cantidad_anomala as boolean,",
+				"          flag_monto_anomalo as boolean,",
+				"          flag_ci_sin_depto as boolean,",
+				"          flag_sin_tipo_carne as boolean,",
+				"          flag_sin_detalle_prods as boolean,",
+				"          fecha_entrega as date,",
+				"          gestion as integer,",
+				"          mes as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}

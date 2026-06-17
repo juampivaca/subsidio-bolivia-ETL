@@ -1,0 +1,115 @@
+{
+	"name": "fact_entregas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "entrega_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "beneficiaria_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "canal_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "almacen_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "tipo_carne_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "tipo_canal",
+				"type": "nvarchar"
+			},
+			{
+				"name": "monto_bs",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "cantidad_kg",
+				"type": "decimal",
+				"precision": 8,
+				"scale": 2
+			},
+			{
+				"name": "nro_lote",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ciudad_entrega",
+				"type": "nvarchar"
+			},
+			{
+				"name": "departamento_entrega",
+				"type": "nvarchar"
+			},
+			{
+				"name": "abrev_depto_entrega",
+				"type": "nvarchar"
+			},
+			{
+				"name": "flag_peso_anomalo",
+				"type": "bit"
+			},
+			{
+				"name": "flag_cantidad_anomala",
+				"type": "bit"
+			},
+			{
+				"name": "flag_monto_anomalo",
+				"type": "bit"
+			},
+			{
+				"name": "flag_ci_sin_depto",
+				"type": "bit"
+			},
+			{
+				"name": "flag_sin_tipo_carne",
+				"type": "bit"
+			},
+			{
+				"name": "flag_sin_detalle_prods",
+				"type": "bit"
+			},
+			{
+				"name": "fecha_entrega",
+				"type": "date"
+			},
+			{
+				"name": "gestion",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "mes",
+				"type": "tinyint",
+				"precision": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "fact_entregas"
+		}
+	}
+}
