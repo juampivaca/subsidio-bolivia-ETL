@@ -76,7 +76,7 @@
 				"lookup1 select(mapColumn(",
 				"          ci_beneficiaria,",
 				"          tipo_subsidio,",
-				"          estado,",
+				"          estado_afiliacion = estado,",
 				"          nro_matricula,",
 				"          abrev_depto_ci = source1@abreviacion_departamento_ci,",
 				"          nombres,",

@@ -8,14 +8,113 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "ds_silver_spl_entregas_agencia",
+						"type": "DatasetReference"
+					},
 					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_beneficiaria",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_canal_entrega",
+						"type": "DatasetReference"
+					},
+					"name": "source3"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_tiempo",
+						"type": "DatasetReference"
+					},
+					"name": "source4",
+					"description": "Importar datos de dim_tiempo"
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "lookup2"
+				},
+				{
+					"name": "lookup3"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1"
+				"source(output(",
+				"          entrega_ag_id as integer,",
+				"          asignacion_id as integer,",
+				"          ci_beneficiaria as string,",
+				"          fecha_entrega as date,",
+				"          punto_entrega as string,",
+				"          ciudad_entrega as string,",
+				"          departamento_entrega as string,",
+				"          abrev_depto_entrega as string,",
+				"          nro_lote as string,",
+				"          cantidad_kg as decimal(6,2),",
+				"          sin_detalle_productos as boolean,",
+				"          peso_anomalo as boolean,",
+				"          anio_entrega as short,",
+				"          mes_entrega as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\r\\n    entrega_ag_id,\\r\\n    asignacion_id,\\r\\n    ci_beneficiaria,\\r\\n    fecha_entrega,\\r\\n    punto_entrega,\\r\\n    ciudad_entrega,\\r\\n    departamento_entrega,\\r\\n    abreviacion_departamento    AS abrev_depto_entrega,\\r\\n    lote                        AS nro_lote,\\r\\n    peso_kg                     AS cantidad_kg,\\r\\n    sin_detalle_productos,\\r\\n    peso_anomalo,\\r\\n    anio_entrega,\\r\\n    mes_entrega\\r\\nFROM silver.spl_entregas_agencia',",
+				"     format: 'query') ~> source1",
+				"source(output(",
+				"          beneficiaria_sk as integer,",
+				"          ci_beneficiaria as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT beneficiaria_sk, ci_beneficiaria FROM gold.dim_beneficiaria',",
+				"     format: 'query') ~> source2",
+				"source(output(",
+				"          canal_sk as integer,",
+				"          nombre_punto as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT canal_sk, nombre_punto FROM gold.dim_canal_entrega',",
+				"     format: 'query') ~> source3",
+				"source(output(",
+				"          tiempo_sk as integer,",
+				"          fecha as date,",
+				"          mes as integer,",
+				"          gestion as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT tiempo_sk, fecha, mes, gestion FROM gold.dim_tiempo',",
+				"     format: 'query') ~> source4",
+				"source1, source2 lookup(source1@ci_beneficiaria == source2@ci_beneficiaria,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(beneficiaria_sk, true),",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1, source3 lookup(punto_entrega == nombre_punto,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(canal_sk, true),",
+				"     broadcast: 'auto')~> lookup2",
+				"lookup2, source4 lookup(fecha_entrega == fecha,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(tiempo_sk, false),",
+				"     broadcast: 'auto')~> lookup3"
 			]
 		}
 	}
