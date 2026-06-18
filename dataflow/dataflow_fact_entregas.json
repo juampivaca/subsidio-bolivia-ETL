@@ -101,9 +101,6 @@
 					"name": "filter2"
 				},
 				{
-					"name": "filter3"
-				},
-				{
 					"name": "filter4"
 				}
 			],
@@ -213,7 +210,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"filter3 derive(tipo_canal = 'Agencia') ~> derivedColumn1",
+				"lookup2 derive(tipo_canal = 'Agencia') ~> derivedColumn1",
 				"source4, source2 lookup(source4@ci_beneficiaria == source2@ci_beneficiaria,",
 				"     multiple: false,",
 				"     pickup: 'first',",
@@ -247,9 +244,8 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
-				"lookup1 filter(!isNull(beneficiaria_sk) ) ~> filter1",
+				"lookup1 filter(!isNull(beneficiaria_sk)) ~> filter1",
 				"lookup3 filter(!isNull(beneficiaria_sk)) ~> filter2",
-				"lookup2 filter(!isNull(canal_sk)) ~> filter3",
 				"lookup4 filter(!isNull(canal_sk)) ~> filter4",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
