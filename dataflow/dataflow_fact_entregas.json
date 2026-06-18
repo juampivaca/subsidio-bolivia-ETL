@@ -27,6 +27,27 @@
 						"type": "DatasetReference"
 					},
 					"name": "source3"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_bronze_spl_entregas_supermercado",
+						"type": "DatasetReference"
+					},
+					"name": "source4"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_canal_entrega",
+						"type": "DatasetReference"
+					},
+					"name": "source5"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_tipo_carne",
+						"type": "DatasetReference"
+					},
+					"name": "source6"
 				}
 			],
 			"sinks": [
@@ -36,6 +57,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "fact_entregas",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
 				}
 			],
 			"transformations": [
@@ -50,6 +78,33 @@
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "lookup3"
+				},
+				{
+					"name": "lookup4"
+				},
+				{
+					"name": "lookup5"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "filter2"
+				},
+				{
+					"name": "filter3"
+				},
+				{
+					"name": "filter4"
 				}
 			],
 			"scriptLines": [
@@ -92,18 +147,56 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     query: 'SELECT canal_sk, nombre_punto FROM gold.dim_canal_entrega',",
 				"     format: 'query') ~> source3",
+				"source(output(",
+				"          entrega_super_id as integer,",
+				"          asignacion_id as integer,",
+				"          ci_beneficiaria as string,",
+				"          supermercado_id as integer,",
+				"          tipo_carne as string,",
+				"          cantidad_kg as decimal(6,2),",
+				"          monto_bs as decimal(10,2),",
+				"          ci_sin_departamento as boolean,",
+				"          sin_tipo_carne as boolean,",
+				"          cantidad_anomala as boolean,",
+				"          monto_anomalo as boolean,",
+				"          anio_retiro as short,",
+				"          mes_retiro as integer,",
+				"          fecha_retiro as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\n    entrega_super_id,\\n    asignacion_id,\\n    ci_beneficiaria,\\n    supermercado_id,\\n    tipo_carne,\\n    cantidad_kg,\\n    monto_bs,\\n    ci_sin_departamento,\\n    sin_tipo_carne,\\n    cantidad_anomala,\\n    monto_anomalo,\\n    anio_retiro,\\n    mes_retiro,\\n    fecha_retiro\\nFROM silver.spl_entregas_supermercado',",
+				"     format: 'query') ~> source4",
+				"source(output(",
+				"          canal_sk as integer,",
+				"          canal_id_nk as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT canal_sk, canal_id_nk FROM gold.dim_canal_entrega\\nWHERE tipo_canal = \\'Supermercado\\'',",
+				"     format: 'query') ~> source5",
+				"source(output(",
+				"          tipo_carne_sk as integer,",
+				"          tipo_carne_nk as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT tipo_carne_sk, tipo_carne_nk FROM gold.dim_tipo_carne',",
+				"     format: 'query') ~> source6",
 				"source1, source2 lookup(source1@ci_beneficiaria == source2@ci_beneficiaria,",
 				"     multiple: false,",
 				"     pickup: 'first',",
 				"     asc(beneficiaria_sk, true),",
 				"     broadcast: 'auto')~> lookup1",
-				"lookup1, source3 lookup(punto_entrega == nombre_punto,",
+				"filter1, source3 lookup(punto_entrega == nombre_punto,",
 				"     multiple: false,",
 				"     pickup: 'first',",
 				"     asc(canal_sk, true),",
 				"     broadcast: 'auto')~> lookup2",
 				"derivedColumn1 select(mapColumn(",
-				"          entrega_ag_id_nk = entrega_ag_id,",
 				"          fecha_entrega,",
 				"          ciudad_entrega,",
 				"          departamento_entrega,",
@@ -120,7 +213,44 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"lookup2 derive(tipo_canal = 'Agencia') ~> derivedColumn1",
+				"filter3 derive(tipo_canal = 'Agencia') ~> derivedColumn1",
+				"source4, source2 lookup(source4@ci_beneficiaria == source2@ci_beneficiaria,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(beneficiaria_sk, true),",
+				"     broadcast: 'auto')~> lookup3",
+				"filter2, source5 lookup(supermercado_id == canal_id_nk,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(canal_id_nk, true),",
+				"     broadcast: 'auto')~> lookup4",
+				"filter4, source6 lookup(tipo_carne == tipo_carne_nk,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(tipo_carne_sk, true),",
+				"     broadcast: 'auto')~> lookup5",
+				"lookup5 derive(tipo_canal = 'Supermercado') ~> derivedColumn2",
+				"derivedColumn2 select(mapColumn(",
+				"          cantidad_kg,",
+				"          monto_bs,",
+				"          flag_ci_sin_departamento = ci_sin_departamento,",
+				"          flag_sin_tipo_carne = sin_tipo_carne,",
+				"          flag_cantidad_anomala = cantidad_anomala,",
+				"          flag_monto_anomalo = monto_anomalo,",
+				"          gestion = anio_retiro,",
+				"          mes = mes_retiro,",
+				"          beneficiaria_sk,",
+				"          canal_sk,",
+				"          tipo_carne_sk,",
+				"          fecha_entrega = fecha_retiro,",
+				"          tipo_canal",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"lookup1 filter(!isNull(beneficiaria_sk) ) ~> filter1",
+				"lookup3 filter(!isNull(beneficiaria_sk)) ~> filter2",
+				"lookup2 filter(!isNull(canal_sk)) ~> filter3",
+				"lookup4 filter(!isNull(canal_sk)) ~> filter4",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -153,7 +283,55 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          entrega_sk as integer,",
+				"          beneficiaria_sk as integer,",
+				"          canal_sk as integer,",
+				"          almacen_sk as integer,",
+				"          tipo_carne_sk as integer,",
+				"          tipo_canal as string,",
+				"          monto_bs as decimal(10,2),",
+				"          cantidad_kg as decimal(8,2),",
+				"          nro_lote as string,",
+				"          ciudad_entrega as string,",
+				"          departamento_entrega as string,",
+				"          abrev_depto_entrega as string,",
+				"          flag_peso_anomalo as boolean,",
+				"          flag_cantidad_anomala as boolean,",
+				"          flag_monto_anomalo as boolean,",
+				"          flag_ci_sin_depto as boolean,",
+				"          flag_sin_tipo_carne as boolean,",
+				"          flag_sin_detalle_prods as boolean,",
+				"          fecha_entrega as date,",
+				"          gestion as integer,",
+				"          mes as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          beneficiaria_sk,",
+				"          canal_sk,",
+				"          tipo_carne_sk,",
+				"          monto_bs,",
+				"          cantidad_kg,",
+				"          flag_cantidad_anomala,",
+				"          flag_monto_anomalo,",
+				"          flag_ci_sin_depto = flag_ci_sin_departamento,",
+				"          flag_sin_tipo_carne,",
+				"          fecha_entrega,",
+				"          gestion,",
+				"          mes,",
+				"          tipo_canal",
+				"     )) ~> sink2"
 			]
 		}
 	}

@@ -1,0 +1,77 @@
+{
+	"name": "fact_asginaciones",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "asignacion_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "asignacion_id_nk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "beneficiaria_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "empleador_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "caja_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "monto_total_bs",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "monto_productos_bs",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "monto_carnes_bs",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "estado",
+				"type": "nvarchar"
+			},
+			{
+				"name": "gestion",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "mes",
+				"type": "tinyint",
+				"precision": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "fact_asignaciones"
+		}
+	}
+}

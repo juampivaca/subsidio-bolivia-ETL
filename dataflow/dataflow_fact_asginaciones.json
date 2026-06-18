@@ -43,7 +43,15 @@
 					"name": "source5"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "fact_asginaciones",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "lookup1"
@@ -148,7 +156,42 @@
 				"          gestion",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1"
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          asignacion_sk as integer,",
+				"          asignacion_id_nk as integer,",
+				"          beneficiaria_sk as integer,",
+				"          empleador_sk as integer,",
+				"          caja_sk as integer,",
+				"          monto_total_bs as decimal(10,2),",
+				"          monto_productos_bs as decimal(10,2),",
+				"          monto_carnes_bs as decimal(10,2),",
+				"          estado as string,",
+				"          gestion as integer,",
+				"          mes as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          asignacion_id_nk,",
+				"          beneficiaria_sk,",
+				"          empleador_sk,",
+				"          caja_sk,",
+				"          monto_total_bs = monto_bs,",
+				"          monto_productos_bs = monto_productos,",
+				"          monto_carnes_bs = monto_carnes,",
+				"          estado,",
+				"          gestion,",
+				"          mes",
+				"     )) ~> sink1"
 			]
 		}
 	}

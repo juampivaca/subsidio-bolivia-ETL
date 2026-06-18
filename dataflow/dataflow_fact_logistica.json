@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "dataflow_fact_logistica",
 	"properties": {
 		"folder": {
 			"name": "gold"
@@ -8,14 +8,261 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "ds_silver_agencia_recepciones",
+						"type": "DatasetReference"
+					},
 					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_almacen",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_transportista",
+						"type": "DatasetReference"
+					},
+					"name": "source3"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_agencia_despachos",
+						"type": "DatasetReference"
+					},
+					"name": "source4"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "fact_logistica",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "fact_logistica",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "lookup2"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "lookup3"
+				},
+				{
+					"name": "lookup4"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "select2"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1"
+				"source(output(",
+				"          recepcion_id as integer,",
+				"          nro_lote as string,",
+				"          almacen_id as integer,",
+				"          transportista_id as integer,",
+				"          fecha_operacion as date,",
+				"          cantidad as decimal(10,2),",
+				"          unidad as string,",
+				"          condicion as string,",
+				"          estado as string,",
+				"          temperatura_llegada as decimal(5,2),",
+				"          flag_temperatura_anomala as boolean,",
+				"          gestion as short,",
+				"          mes as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\n    recepcion_id,\\n    nro_lote,\\n    almacen_id,\\n    transportista_id,\\n    fecha_recepcion     AS fecha_operacion,\\n    cantidad_recibida   AS cantidad,\\n    unidad,\\n    condicion,\\n    estado,\\n    temperatura_llegada,\\n    temperatura_anomala AS flag_temperatura_anomala,\\n    anio_recepcion      AS gestion,\\n    mes_recepcion       AS mes\\nFROM silver.agencia_recepciones',",
+				"     format: 'query') ~> source1",
+				"source(output(",
+				"          almacen_sk as integer,",
+				"          almacen_id_nk as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT almacen_sk, almacen_id_nk FROM gold.dim_almacen',",
+				"     format: 'query') ~> source2",
+				"source(output(",
+				"          transportista_sk as integer,",
+				"          transportista_id_nk as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT transportista_sk, transportista_id_nk FROM gold.dim_transportista',",
+				"     format: 'query') ~> source3",
+				"source(output(",
+				"          despacho_id as integer,",
+				"          nro_lote as string,",
+				"          almacen_id as integer,",
+				"          transportista_id as integer,",
+				"          fecha_operacion as date,",
+				"          cantidad as decimal(10,2),",
+				"          centro_destino as string,",
+				"          estado as string,",
+				"          dias_en_transito as integer,",
+				"          despacho_cumplido as boolean,",
+				"          gestion as short,",
+				"          mes as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\n    despacho_id,\\n    nro_lote,\\n    almacen_id,\\n    transportista_id,\\n    fecha_despacho      AS fecha_operacion,\\n    cantidad_despachada AS cantidad,\\n    centro_destino,\\n    estado,\\n    dias_en_transito,\\n    despacho_cumplido,\\n    anio_despacho       AS gestion,\\n    mes_despacho        AS mes\\nFROM silver.agencia_despachos',",
+				"     format: 'query') ~> source4",
+				"source1, source2 lookup(almacen_id == almacen_id_nk,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(almacen_id_nk, true),",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1, source3 lookup(transportista_id == transportista_id_nk,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(transportista_sk, true),",
+				"     broadcast: 'auto')~> lookup2",
+				"lookup2 derive(tipo_operacion = 'Recepcion',",
+				"          centro_destino = toString(null()),",
+				"          dias_en_transito = toInteger(null()),",
+				"          despacho_cumplido = toShort(null())) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          nro_lote,",
+				"          fecha_operacion,",
+				"          cantidad,",
+				"          unidad,",
+				"          condicion,",
+				"          estado,",
+				"          temperatura_llegada,",
+				"          flag_temperatura_anomala,",
+				"          gestion,",
+				"          mes,",
+				"          almacen_sk,",
+				"          transportista_sk,",
+				"          tipo_operacion,",
+				"          centro_destino,",
+				"          dias_en_transito,",
+				"          despacho_cumplido",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"source4, source2 lookup(almacen_id == almacen_id_nk,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(almacen_sk, true),",
+				"     broadcast: 'auto')~> lookup3",
+				"lookup3, source3 lookup(transportista_id == transportista_id_nk,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(transportista_sk, true),",
+				"     broadcast: 'auto')~> lookup4",
+				"lookup4 derive(tipo_operacion = 'Despacho',",
+				"          condicion = toString(null()),",
+				"          temperatura_llegada = toDecimal(null()),",
+				"          flag_temperatura_anomala =  toShort(null()),",
+				"          unidad = toString(null())) ~> derivedColumn2",
+				"derivedColumn2 select(mapColumn(",
+				"          nro_lote,",
+				"          fecha_operacion,",
+				"          cantidad,",
+				"          centro_destino,",
+				"          estado,",
+				"          dias_en_transito,",
+				"          despacho_cumplido,",
+				"          gestion,",
+				"          mes,",
+				"          almacen_sk,",
+				"          transportista_sk,",
+				"          tipo_operacion,",
+				"          condicion,",
+				"          temperatura_llegada,",
+				"          flag_temperatura_anomala,",
+				"          unidad",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          logistica_sk as integer,",
+				"          almacen_sk as integer,",
+				"          transportista_sk as integer,",
+				"          tipo_operacion as string,",
+				"          nro_lote as string,",
+				"          cantidad as decimal(10,2),",
+				"          unidad as string,",
+				"          condicion as string,",
+				"          temperatura_llegada as decimal(5,2),",
+				"          centro_destino as string,",
+				"          estado as string,",
+				"          dias_en_transito as integer,",
+				"          despacho_cumplido as boolean,",
+				"          flag_temperatura_anomala as boolean,",
+				"          fecha_operacion as date,",
+				"          gestion as integer,",
+				"          mes as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          logistica_sk as integer,",
+				"          almacen_sk as integer,",
+				"          transportista_sk as integer,",
+				"          tipo_operacion as string,",
+				"          nro_lote as string,",
+				"          cantidad as decimal(10,2),",
+				"          unidad as string,",
+				"          condicion as string,",
+				"          temperatura_llegada as decimal(5,2),",
+				"          centro_destino as string,",
+				"          estado as string,",
+				"          dias_en_transito as integer,",
+				"          despacho_cumplido as boolean,",
+				"          flag_temperatura_anomala as boolean,",
+				"          fecha_operacion as date,",
+				"          gestion as integer,",
+				"          mes as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink2"
 			]
 		}
 	}

@@ -1,0 +1,98 @@
+{
+	"name": "fact_logistica",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_dw",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "logistica_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "almacen_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "transportista_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "tipo_operacion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nro_lote",
+				"type": "nvarchar"
+			},
+			{
+				"name": "cantidad",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "unidad",
+				"type": "nvarchar"
+			},
+			{
+				"name": "condicion",
+				"type": "nvarchar"
+			},
+			{
+				"name": "temperatura_llegada",
+				"type": "decimal",
+				"precision": 5,
+				"scale": 2
+			},
+			{
+				"name": "centro_destino",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado",
+				"type": "nvarchar"
+			},
+			{
+				"name": "dias_en_transito",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "despacho_cumplido",
+				"type": "bit"
+			},
+			{
+				"name": "flag_temperatura_anomala",
+				"type": "bit"
+			},
+			{
+				"name": "fecha_operacion",
+				"type": "date"
+			},
+			{
+				"name": "gestion",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "mes",
+				"type": "tinyint",
+				"precision": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "fact_logistica"
+		}
+	}
+}
